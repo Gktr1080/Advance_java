@@ -1,0 +1,88 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+public class awt extends Frame implements ActionListener {
+    private TextField NameField, IdField, ContactField, AgeField;
+    private Button addButton, updateButton, deleteButton;
+    private Label messageLabel;
+    private Connection connection;
+
+    public awt() {
+        super("awt");
+
+        // Create text fields
+        NameField = new TextField(20);
+        IdField = new TextField(20);
+        ContactField = new TextField(20);
+        AgeField = new TextField(20);
+
+        // Create buttons
+        addButton = new Button("Add");
+        addButton.addActionListener(this);
+        updateButton = new Button("Update");
+        updateButton.addActionListener(this);
+        deleteButton = new Button("Delete");
+        deleteButton.addActionListener(this);
+
+        // Create message label
+        messageLabel = new Label("");
+
+        // Add components to window
+        setLayout(new GridLayout(4, 2));
+        add(new Label("Name:"));
+        add(NameField);
+        add(new Label("ID:"));
+        add(IdField);
+        add(new Label("Contact:"));
+        add(ContactField);
+        add(new Label("Age:"));
+        add(AgeField);
+        add(addButton);
+        add(updateButton);
+        add(deleteButton);
+        add(messageLabel);
+
+        // Connect to MySQL database
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/mydatabase", "root", "");
+        } catch (Exception ex) {
+            messageLabel.setText("Error connecting to database: " + ex.getMessage());
+        }
+
+        // Set window size and visibility
+        setSize(400, 200);
+        setVisible(true);
+    }
+
+
+    public void actionPerformed(ActionEvent e) {
+        try {
+            Statement statement = connection.createStatement();
+            String name = nameField.getText();
+            int id = Integer.parseInt(idField.getText());
+            String contact = contactField.getText();
+            int age = Integer.parseInt(ageField.getText());
+
+            if (e.getSource() == addButton) {
+                statement.executeUpdate("INSERT INTO mytable (Name, Contact, Id, Age) VALUES ('" + Name + "','" +Id + "','" + Contact + "', " + Age + ")");
+                messageLabel.setText("Record added successfully");
+            } else if (e.getSource() == updateButton) {
+                statement.executeUpdate("UPDATE mytable SET Name = '" + Name + "',Contact = '" + Contact + "', WHERE Id = " + Id + ",Age = " + Age +");
+                messageLabel.setText("Record updated successfully");
+            } else if (e.getSource() == deleteButton) {
+                statement.executeUpdate("DELETE FROM mytable WHERE Id = " + Id);
+                messageLabel.setText("Record deleted successfully");
+            }
+        } catch (Exception ex) {
+            messageLabel.setText("Error performing operation: " + ex.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        new awt();
+    }
+}
+
+    
